@@ -1,0 +1,62 @@
+<!-- src/main/resources/static/room.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skribble Game - Room</title>
+</head>
+<body>
+  <h2>Room: <span id="roomCodeDisplay"></span></h2>
+  <div id="chatBox" style="border: 1px solid #ccc; height:300px; overflow-y: scroll;"></div>
+  <br/>
+  <input type="text" id="chatInput" placeholder="Type message...">
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('act');
+    const username = localStorage.getItem('username');
+    let roomCode = localStorage.getItem('roomCode') || 'NEW_ROOM';
+
+    // Display the room code on the page.
+    document.getElementById('roomCodeDisplay').innerText = roomCode;
+
+    // When the page loads, call the backend to create or join the room.
+    window.onload = function() {
+      if (action === 'create') {
+        // Call the backend create room API
+        fetch(`/api/room/create?username=${username}`, { method: 'POST' })
+          .then(response => response.json())
+          .then(room => {
+            roomCode = room.roomCode;
+            localStorage.setItem('roomCode', roomCode);
+            document.getElementById('roomCodeDisplay').innerText = roomCode;
+          });
+      } else if (action === 'join') {
+        // Call the backend join room API
+        fetch(`/api/room/join?username=${username}&roomCode=${roomCode}`, { method: 'POST' })
+          .then(response => response.json())
+          .then(room => {
+            if(room) {
+              document.getElementById('roomCodeDisplay').innerText = room.roomCode;
+            } else {
+              alert("Room not found or full.");
+            }
+          });
+      }
+    };
+
+    // Simple local chat functionality for now.
+    function sendMessage() {
+      const msg = document.getElementById('chatInput').value;
+      if(msg.trim() === '') return;
+      const chatBox = document.getElementById('chatBox');
+      const p = document.createElement('p');
+      p.innerText = username + ": " + msg;
+      chatBox.appendChild(p);
+      document.getElementById('chatInput').value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
