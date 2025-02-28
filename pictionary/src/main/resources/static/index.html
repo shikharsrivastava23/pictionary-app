@@ -1,0 +1,31 @@
+<!-- src/main/resources/static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skribble Game - Welcome</title>
+</head>
+<body>
+  <h2>Enter your username</h2>
+  <input type="text" id="username" placeholder="Username">
+  <br/><br/> 
+  <button onclick="createRoom()">Create Room</button>
+  <button onclick="joinRoom()">Join Room</button>
+
+  <script>
+    function createRoom() {
+      const username = document.getElementById('username').value;
+      localStorage.setItem('username', username);
+      // Redirect to the room page in create mode
+      window.location.href = 'room.html?act=create';
+    }
+    function joinRoom() {
+      const username = document.getElementById('username').value;
+      localStorage.setItem('username', username);
+      const roomCode = prompt("Enter Room Code:");
+      localStorage.setItem('roomCode', roomCode);
+      window.location.href = 'room.html?act=join';
+    }
+  </script>
+</body>
+</html>
