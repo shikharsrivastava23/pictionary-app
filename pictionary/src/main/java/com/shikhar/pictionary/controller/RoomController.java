@@ -27,4 +27,17 @@ public class RoomController {
         logger.info("Room created with roomCode: {}", room.getRoomCode());
         return room;
     }
+
+    @PostMapping("/join")
+    public Room joinRoom(@RequestParam String roomCode, @RequestParam String username) {
+        logger.info("Received request to join room {} by username: {}", roomCode, username);
+        Player player = new Player(username, false);
+        Room room = roomService.joinRoom(roomCode, player);
+        if (room != null) {
+            logger.info("User {} joined room: {}", username, room.getRoomCode());
+        } else {
+            logger.warn("Failed to join room. Room {} not found or full. Username: {}", roomCode, username);
+        }
+        return room;
+    }
 }
